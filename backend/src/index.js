@@ -2,6 +2,7 @@ import dotenv from 'dotenv'
 import express from 'express'
 import { connectDB } from './lib/db.js'
 import authUser from './routes/auth.routes.js'
+import userTask from './routes/task.routes.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 dotenv.config()
@@ -21,6 +22,7 @@ app.use(cors({
   
 
 app.use('/api/auth',authUser)
+app.use('/api/task',userTask)
 
 
 app.listen(PORT,()=>{
