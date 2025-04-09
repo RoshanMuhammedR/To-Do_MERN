@@ -3,10 +3,15 @@ import { useForm } from "react-hook-form";
 import { useAuthStore } from "../store/useAuthStore";
 import { axiosInstance } from "../lib/axios";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { useNewtaskStore } from "../store/useNewtaskStore";
+import { Loader2 } from "lucide-react";
+import { RxCross2 } from "react-icons/rx";
 
 const NewTask = () => {
     const [tags,setTags] = useState([]);
     const {authUser} = useAuthStore()
+    const {closeTaskMenu,tasking,setTaskingTrue,setTaskingFalse} = useNewtaskStore();
     const {
         register,
         handleSubmit,
@@ -14,8 +19,17 @@ const NewTask = () => {
     } = useForm()
 
     const onSubmit = async (data)=> {
-        data = {...data,section:"task",user:authUser._id,tags:tags}
-        const res = await axiosInstance.post('/task/newtask',data);
+        try {
+            setTaskingTrue();
+            data = {...data,section:"task",user:authUser._id,tags:tags}
+            const res = await axiosInstance.post('/task/newtask',data);
+            toast.success("Task created successfully");
+            setTaskingFalse();
+            closeTaskMenu();
+        } catch (error) {
+            console.log(error.message);
+        }
+        
         ///
     }
 
@@ -101,8 +115,17 @@ const NewTask = () => {
                 type="submit"
                 className="bg-black hover:bg-[#333] text-white font-semibold py-2 px-4 rounded w-full transition duration-200"
             >
-                Submit
+                {!tasking? "Submit":<Loader2 className='animate-spin ml-[50%]'/>}
             </button>
+
+            {/* cancel */}
+            <button
+                className="bg-white hover:bg-gray-100 text-black font-semibold py-2 px-4 rounded w-full transition duration-200 border-2"
+                onClick={()=>{closeTaskMenu()}}
+            >
+                Cancel
+            </button>
+
         </form>
     </div>
   )

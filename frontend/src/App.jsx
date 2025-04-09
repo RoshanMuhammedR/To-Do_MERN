@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react'
 import { Routes, Route, Navigate} from 'react-router-dom'
+import { Toaster } from "react-hot-toast";
+
+
 
 import {Loader} from 'lucide-react'
 import SignupPage from './pages/SignupPage'
@@ -25,6 +28,7 @@ const App = () => {
 
   return (
     <div>
+      <Toaster position="top-right" reverseOrder={false} />
       <Routes>
         <Route path='/' element={authUser? <HomePage/>:<Navigate to='/login'/>} />
         <Route path='/signup' element={authUser? <Navigate to='/'/>:<SignupPage />} />

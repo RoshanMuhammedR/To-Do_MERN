@@ -21,8 +21,8 @@ import { useNewtaskStore } from "../store/useNewtaskStore.js";
 
 
 export const AppSidebar = () => {
-    const {isOpen,toggle} = useSidebarStore();
-    const {taskMenuStatus,openTaskMenu} = useNewtaskStore()
+    const {isOpen,toggle,choosenMenu,changeMenu} = useSidebarStore();
+    const {taskMenuStatus,openTaskMenu} = useNewtaskStore();
     const items = [
         {name:"Upcoming",icon:IoIosTrendingUp},
         {name:"Today",icon:LuTableOfContents},
@@ -65,13 +65,17 @@ export const AppSidebar = () => {
         <div className="p-2">
             {isOpen &&<span className="text-[15px] font-bold">Task</span>}
             {items.map((item)=>(
-                <a 
-                    key={item.name}
-                    className="flex items-center gap-2 p-2 hover:bg-gray-200 rounded"
-                >
-                    <item.icon className='w-7 h-7' />
-                    {isOpen && <span>{item.name}</span>}
-                </a>
+                <div onClick={()=>changeMenu(item.name)} key={item.name}>
+                    
+                    <a 
+                        className={`flex items-center gap-2 p-2 mt-2 rounded
+                        ${item.name==choosenMenu? "bg-black text-white":"hover:bg-gray-200"}`}
+                    >
+                        <item.icon className='w-7 h-7' />
+                        {isOpen && <span>{item.name}</span>}
+                    </a>
+                </div>
+                
             ))}
         </div>
         <div className="my-2 p-2 mt-5">
