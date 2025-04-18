@@ -7,11 +7,13 @@ import toast from "react-hot-toast";
 import { useNewtaskStore } from "../store/useNewtaskStore";
 import { Loader2 } from "lucide-react";
 import { RxCross2 } from "react-icons/rx";
+import { useSidebarStore } from "../store/useSidebarStore";
 
 const NewTask = () => {
     const [tags,setTags] = useState([]);
     const {authUser} = useAuthStore()
     const {closeTaskMenu,tasking,setTaskingTrue,setTaskingFalse} = useNewtaskStore();
+    const {getData} =  useSidebarStore()
     const {
         register,
         handleSubmit,
@@ -25,6 +27,7 @@ const NewTask = () => {
             const res = await axiosInstance.post('/task/newtask',data);
             toast.success("Task created successfully");
             setTaskingFalse();
+            getData();
             closeTaskMenu();
         } catch (error) {
             console.log(error.message);
@@ -43,7 +46,7 @@ const NewTask = () => {
     }
 
   return (
-    <div className='w-[30%] p-3  border shadow-xl'>
+    <div className='w-[30%] p-3 bg-white border shadow-xl'>
         <form className=" p-6 rounded-xl s
                         hadow-md w-full max-w-md mx-auto 
                         space-y-4"
