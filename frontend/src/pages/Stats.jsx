@@ -114,7 +114,8 @@ const Stats = () => {
             </div>
 
             <div className="w-full h-38 bg-gray-700 my-4 flex items-center justify-center text-white">
-                {quote}
+                {quote
+                }
             </div>
         </div>
     )
