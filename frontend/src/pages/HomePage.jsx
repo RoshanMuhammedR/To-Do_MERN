@@ -13,6 +13,7 @@ import { ShowTaskBig } from '../components/ShowTaskBig.jsx';
 import Today from './Today.jsx';
 import Stats from './Stats.jsx';
 import Calendar from './Calendar.jsx';
+import AllTask from './AllTask.jsx';
 
 const HomePage = () => {
   const {taskMenuStatus,} = useNewtaskStore();
@@ -52,6 +53,8 @@ const HomePage = () => {
                             return <Today />;
                         case 'Calendar':
                             return <Calendar />;
+                        case 'All Task':
+                          return <AllTask />
                         default:
                             return null;
                     }

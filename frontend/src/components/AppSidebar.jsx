@@ -1,7 +1,6 @@
 import { useSidebarStore } from "../store/useSidebarStore";
 
 import { IoIosTrendingUp } from "react-icons/io";
-import { IoMenu } from "react-icons/io5";
 import { CiCalendar } from "react-icons/ci";
 import { CiStickyNote } from "react-icons/ci";
 import { LuTableOfContents } from "react-icons/lu";
@@ -9,6 +8,7 @@ import { FaArrowRight } from "react-icons/fa";
 import { CiSettings } from "react-icons/ci";
 import { PiSignOut } from "react-icons/pi";
 import { FiPlus } from "react-icons/fi";
+import { FaTasks } from "react-icons/fa";
 import { Loader2 } from 'lucide-react'
 
 
@@ -27,7 +27,7 @@ export const AppSidebar = () => {
         {name:"Upcoming",icon:IoIosTrendingUp},
         {name:"Today",icon:LuTableOfContents},
         {name:"Calendar",icon:CiCalendar},
-        {name:"Sticky Wall",icon:CiStickyNote},
+        {name:"All Tasks",icon:FaTasks},
     ]
 
 
