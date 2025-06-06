@@ -53,7 +53,7 @@ const HomePage = () => {
                             return <Today />;
                         case 'Calendar':
                             return <Calendar />;
-                        case 'All Task':
+                        case 'All Tasks':
                           return <AllTask />
                         default:
                             return null;

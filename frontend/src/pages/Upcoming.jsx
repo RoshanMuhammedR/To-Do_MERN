@@ -27,6 +27,34 @@ const Upcoming = () => {
   endOfWeek.setDate(now.getDate() + (7 - now.getDay()))
   endOfWeek.setHours(23, 59, 59, 999)
 
+  // Filter tomorrow's tasks
+  const tmrwTasks =
+    tasks &&
+    tasks.filter((task) => {
+      const ddate = new Date(task.duedate)
+      return !task.isCompleted && ddate >= tmrwStart && ddate <= tmrwEnd
+    })
+
+  // Filter this week's tasks
+  const weekTasks =
+    tasks &&
+    tasks.filter((task) => {
+      const ddate = new Date(task.duedate)
+      return (
+        !task.isCompleted &&
+        ddate > tmrwEnd &&
+        ddate <= endOfWeek
+      )
+    })
+
+  // Filter later tasks
+  const laterTasks =
+    tasks &&
+    tasks.filter((task) => {
+      const ddate = new Date(task.duedate)
+      return !task.isCompleted && ddate > endOfWeek
+    })
+
   return (
     <div className="p-4">
       <div className="w-full h-[42vh] bg-white rounded-xl shadow-md hover:shadow-lg transition duration-300 overflow-hidden mb-5">
@@ -34,14 +62,16 @@ const Upcoming = () => {
           <FiClock className="text-white text-2xl" />
           <span className="text-2xl font-semibold text-white">Tomorrow</span>
         </div>
-        <div className="overflow-y-auto h-[calc(42vh-3.5rem)] custom-scroll">
-          {tasks &&
-            tasks.map((task) => {
-              const ddate = new Date(task.duedate)
-              if (!task.isCompleted && ddate >= tmrwStart && ddate <= tmrwEnd) {
-                return <ShowTaskSmall key={task._id} when="Tomorrow" task={task} />
-              }
-            })}
+        <div className="overflow-y-auto h-[calc(42vh-3.5rem)] custom-scroll flex flex-col items-stretch justify-start">
+          {tmrwTasks && tmrwTasks.length > 0 ? (
+            tmrwTasks.map((task) => (
+              <div key={task._id} className="w-full mb-2">
+                <ShowTaskSmall when="Tomorrow" task={task} />
+              </div>
+            ))
+          ) : (
+            <span className="text-gray-400 mt-8 self-center">No tasks for tomorrow</span>
+          )}
         </div>
       </div>
 
@@ -51,18 +81,16 @@ const Upcoming = () => {
             <FiCalendar className="text-white text-2xl" />
             <span className="text-2xl font-semibold text-white">This Week</span>
           </div>
-          <div className="p-4 overflow-y-auto h-[calc(40vh-3.5rem)] custom-scroll">
-            {tasks &&
-              tasks.map((task) => {
-                const ddate = new Date(task.duedate)
-                if (
-                  !task.isCompleted &&
-                  ddate > tmrwEnd &&
-                  ddate <= endOfWeek
-                ) {
-                  return <ShowTaskSmall key={task._id} when="This Week" task={task} />
-                }
-              })}
+          <div className="p-4 overflow-y-auto h-[calc(40vh-3.5rem)] custom-scroll flex flex-col items-stretch justify-start">
+            {weekTasks && weekTasks.length > 0 ? (
+              weekTasks.map((task) => (
+                <div key={task._id} className="w-full mb-2">
+                  <ShowTaskSmall when="This Week" task={task} />
+                </div>
+              ))
+            ) : (
+              <span className="text-gray-400 mt-8 self-center">No tasks for this week</span>
+            )}
           </div>
         </div>
 
@@ -71,14 +99,16 @@ const Upcoming = () => {
             <FiCornerRightDown className="text-white text-2xl" />
             <span className="text-2xl font-semibold text-white">Later</span>
           </div>
-          <div className="overflow-y-auto h-[calc(40vh-3.5rem)] custom-scroll">
-            {tasks &&
-              tasks.map((task) => {
-                const ddate = new Date(task.duedate)
-                if (!task.isCompleted && ddate > endOfWeek) {
-                  return <ShowTaskSmall key={task._id} when="Later" task={task} />
-                }
-              })}
+          <div className="overflow-y-auto h-[calc(40vh-3.5rem)] custom-scroll flex flex-col items-stretch justify-start">
+            {laterTasks && laterTasks.length > 0 ? (
+              laterTasks.map((task) => (
+                <div key={task._id} className="w-full mb-2">
+                  <ShowTaskSmall when="Later" task={task} />
+                </div>
+              ))
+            ) : (
+              <span className="text-gray-400 mt-8 self-center">No tasks for later</span>
+            )}
           </div>
         </div>
       </div>

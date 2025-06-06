@@ -10,6 +10,8 @@ import { PiSignOut } from "react-icons/pi";
 import { FiPlus } from "react-icons/fi";
 import { FaTasks } from "react-icons/fa";
 import { Loader2 } from 'lucide-react'
+import { RiTaskLine } from "react-icons/ri";
+
 
 
 
@@ -27,7 +29,7 @@ export const AppSidebar = () => {
         {name:"Upcoming",icon:IoIosTrendingUp},
         {name:"Today",icon:LuTableOfContents},
         {name:"Calendar",icon:CiCalendar},
-        {name:"All Tasks",icon:FaTasks},
+        {name:"All Tasks",icon:RiTaskLine},
     ]
 
 

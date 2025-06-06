@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useSidebarStore } from '../store/useSidebarStore'
 import TaskCard from '../components/TaskCard'
 import { motion } from 'framer-motion'
+import no_task_img from '../assets/no_task_bg.png'
 
 const Today = () => {
   const { getData, tasks } = useSidebarStore()
@@ -93,7 +94,7 @@ const Today = () => {
     draw()
   }, [todayTasks])
 
-  return (
+  return tasks ? (
     <div ref={containerRef} className="relative w-full h-[90%] overflow-hidden">
       <svg
         className="absolute inset-0 pointer-events-none z-0"
@@ -117,7 +118,12 @@ const Today = () => {
         )}
       </svg>
 
-      
+      {todayTasks.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <img src={no_task_img} className='bg-cover'></img>
+        </div>
+      )}
+
       {todayTasks.map(task => {
         const pos = positions[task._id] || { x: 0, y: 0 }
 
@@ -146,7 +152,10 @@ const Today = () => {
         )
       })}
     </div>
+  ) : (
+    <div>hello</div>
   )
+  
 }
 
 export default Today
