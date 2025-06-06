@@ -6,7 +6,6 @@ export const useSidebarStore = create((set)=>({
     isFetching:false,
     choosenMenu:'Today',
     tasks:null,
-    quote:null,
     toggle:()=>set((state)=>({isOpen:!state.isOpen})),
     open:()=>set({isOpen:true}),
     close:()=>set({isOpen:false}),
@@ -19,16 +18,6 @@ export const useSidebarStore = create((set)=>({
         } catch (error) {
             console.log("Error while fetching the data");
         }
-    },
-    getQuote:async ()=> {
-        try {
-            const res = await axiosInstance.get('/quote');
-            console.log(res);
-            
-            set({quote:res.data});
-        } catch (error) {
-            console.log("Error while fetcing the quote");
-        }
-    } 
+    }
     
 }))

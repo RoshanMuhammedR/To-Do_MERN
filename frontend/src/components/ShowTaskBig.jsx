@@ -140,15 +140,23 @@ export const ShowTaskBig = ({ choosenTask }) => {
             Pinned
           </label>
         </div>
-
-        <button
-          onClick={handleSave}
-          className="px-6 py-2 text-lg font-semibold border border-black hover:bg-black hover:text-white transition-all duration-200 rounded w-max"
-        >
-          Save
-        </button>
+        <div className="flex justify-between  gap-2">
+          <button
+            onClick={handleSave}
+            className="px-6 py-2 text-lg font-semibold border border-black hover:bg-black hover:text-white transition-all duration-200 rounded w-max"
+          >
+            Save
+          </button>
+          <button
+            onClick={() => chooseTask(null)}
+            className="px-6 py-2 text-lg font-semibold border border-black hover:bg-black hover:text-white transition-all duration-200 rounded w-max"
+          >
+            Close
+          </button>
+        </div>
+        
       </form>
-
+  
       <div className="flex justify-end mt-auto pt-6 text-sm text-gray-600">
         <div className="text-right">
           <p>Created At: {new Date(task.createdAt).toLocaleString()}</p>

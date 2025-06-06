@@ -26,7 +26,7 @@ export const AppSidebar = () => {
     const items = [
         {name:"Upcoming",icon:IoIosTrendingUp},
         {name:"Today",icon:LuTableOfContents},
-        {name:"Calender",icon:CiCalendar},
+        {name:"Calendar",icon:CiCalendar},
         {name:"Sticky Wall",icon:CiStickyNote},
     ]
 

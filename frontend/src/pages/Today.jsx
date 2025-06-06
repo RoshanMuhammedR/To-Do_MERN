@@ -7,8 +7,11 @@ const Today = () => {
   const { getData, tasks } = useSidebarStore()
   const containerRef = useRef(null)
   const [positions, setPositions] = useState({})
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
   const [initialized, setInitialized] = useState(false)
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
+
+  const cardRefs = useRef({})
+  const pathRefs = useRef([])
 
   useEffect(() => {
     getData()
@@ -52,11 +55,69 @@ const Today = () => {
     setInitialized(true)
   }, [todayTasks, containerSize, initialized])
 
+  useEffect(() => {
+    const draw = () => {
+      if (!containerRef.current) return
+
+      pathRefs.current.forEach((path, i) => {
+        const currentId = todayTasks[i]?._id
+        const nextId = todayTasks[i + 1]?._id
+        if (!currentId || !nextId) return
+
+        const current = cardRefs.current[currentId]
+        const next = cardRefs.current[nextId]
+        if (!current || !next) return
+
+        const currRect = current.getBoundingClientRect()
+        const nextRect = next.getBoundingClientRect()
+        const containerRect = containerRef.current.getBoundingClientRect()
+
+        const x1 = currRect.left + currRect.width / 2 - containerRect.left
+        const y1 = currRect.top + currRect.height / 2 - containerRect.top
+        const x2 = nextRect.left + nextRect.width / 2 - containerRect.left
+        const y2 = nextRect.top + nextRect.height / 2 - containerRect.top
+
+        const dx = Math.abs(x2 - x1) * 0.5
+        const c1x = x1 + dx
+        const c1y = y1
+        const c2x = x2 - dx
+        const c2y = y2
+
+        const d = `M ${x1},${y1} C ${c1x},${c1y} ${c2x},${c2y} ${x2},${y2}`
+        path.setAttribute('d', d)
+      })
+
+      requestAnimationFrame(draw)
+    }
+
+    draw()
+  }, [todayTasks])
+
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full h-[90%] overflow-hidden"
-    >
+    <div ref={containerRef} className="relative w-full h-[90%] overflow-hidden">
+      <svg
+        className="absolute inset-0 pointer-events-none z-0"
+        width="100%"
+        height="100%"
+      >
+        <defs>
+          <filter id="rope-texture">
+            <feTurbulence type="fractalNoise" baseFrequency="0.1" numOctaves="2" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+        {todayTasks.map((_, i) =>
+          i < todayTasks.length - 1 ? (
+            <path
+              key={`path-${i}`}
+              ref={el => (pathRefs.current[i] = el)}
+              className="stroke-black stroke-[2] fill-none rope-effect"
+            />
+          ) : null
+        )}
+      </svg>
+
+      
       {todayTasks.map(task => {
         const pos = positions[task._id] || { x: 0, y: 0 }
 
@@ -66,7 +127,8 @@ const Today = () => {
             dragConstraints={containerRef}
             dragElastic={0.1}
             key={task._id}
-            className="cursor-grab active:cursor-grabbing absolute"
+            ref={el => (cardRefs.current[task._id] = el)}
+            className="cursor-grab active:cursor-grabbing absolute z-10"
             initial={{ x: pos.x, y: pos.y }}
             animate={{
               x: [pos.x, pos.x + 5, pos.x, pos.x - 5, pos.x],

@@ -4,18 +4,31 @@ import toast from "react-hot-toast";
 import { useAuthStore } from '../store/useAuthStore';
 import { useSidebarStore } from '../store/useSidebarStore';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import axios from 'axios'
+import logo from '../assets/default_dp.jpeg'; 
 
 const Stats = () => {
     const inputRef = useRef(null);
-    const { authUser,quote } = useAuthStore();
-    const { tasks ,getData} = useSidebarStore();
-    const [url, setUrl] = useState(null);
+    const { authUser,checkAuth } = useAuthStore();
+    const { tasks ,getData } = useSidebarStore();
+    // const [url, setUrl] = useState(null);
+    const [quote, setQuote] = useState({});
 
-    useEffect(()=>{
+    useEffect(() => {
         getData();
-    },[tasks])
+    }, []);
 
+    useEffect(() => {
+        const fetchQuote = async () => {
+            try {
+                const response = await axiosInstance.get('/quote');
+                setQuote({ q: response.data[0].q, a: response.data[0].a });
+            } catch (error) {
+                console.error('Error fetching quote:', error);
+                setQuote({ q: "Keep pushing forward!" });
+            }
+        };
+        fetchQuote();
+    }, []);
 
     const completedNo = tasks?.filter(task => task.isCompleted).length;
     const pendingNo = tasks?.filter(task => !task.isCompleted).length;
@@ -25,7 +38,7 @@ const Stats = () => {
 
     const handDpClick = () => {
         inputRef.current.click();
-    }
+    };
 
     const handleDpUpload = async (e) => {
         const file = e.target.files[0];
@@ -36,12 +49,12 @@ const Stats = () => {
         try {
             const res = await axiosInstance.post('/upload/dp', formData);
             toast.success("Image updated successfully");
-            setUrl(res.data.url);
+            await checkAuth();
         } catch (error) {
             console.log("Error while uploading image: ", error);
             toast.error("error while uploading image");
         }
-    }
+    };
 
     const chartData = [
         { name: 'Pending', value: pendingNo },
@@ -52,9 +65,13 @@ const Stats = () => {
     const COLORS = ['#000000', '#ffffff', '#808080'];
 
     return (
-        <div className='w-[100%] h-[100%]'>
+        <div className='w-full h-full px-4'>
+            {/* Profile Image */}
             <div className="h-54 w-full flex flex-col items-center">
-                <div className='size-45 rounded-[50%] cursor-pointer border-2 border-black' onClick={handDpClick}>
+                <div
+                    className='size-45 rounded-full cursor-pointer border-2 border-black shadow-md hover:shadow-lg transition-shadow duration-300'
+                    onClick={handDpClick}
+                >
                     <input
                         type='file'
                         accept='image/*'
@@ -62,40 +79,67 @@ const Stats = () => {
                         ref={inputRef}
                         className='hidden'
                     />
-                    {url && (
+                    {authUser.dp ? (
                         <img
-                            src={url}
+                            src={authUser.dp}
                             alt="Profile"
-                            className="w-full h-full rounded-[50%] object-cover"
+                            className="w-full h-full rounded-full object-cover"
+                        />
+                    ): (
+                        <img
+                            src={logo}
+                            alt="Default Profile"
+                            className="w-full h-full rounded-full object-cover"
                         />
                     )}
                 </div>
-                <div className="text-4xl font-semibold text-black my-2">{authUser.name}</div>
-            </div>
-
-            <div className="grid grid-rows-2 grid-cols-2 gap-4 mt-4">
-                <div className='col-span-2 w-full h-full'>
-                    <div className="flex flex-col justify-center items-center h-full">
-                        <span className='text-lg text-gray-700'>Pending</span>
-                        {pendingNo}
-                    </div>
-                </div>
-                <div className='w-full h-30'>
-                    <div className="flex flex-col justify-center items-center h-full">
-                        <span className='text-lg text-gray-700'>Completed</span>
-                        {completedNo}
-                    </div>
-                </div>
-                <div className='w-full h-30'>
-                    <div className="flex flex-col justify-center items-center h-full">
-                        <span className='text-lg text-gray-700'>Due</span>
-                        {dueNo}
-                    </div>
+                {authUser.dp && (
+                    <button
+                        className="mt-2 text-xs black-500 hover:text-black transition-colors duration-300"
+                        onClick={async (e) => {
+                            e.stopPropagation();
+                            try {
+                                await axiosInstance.post('/upload/remove-dp');
+                                toast.success("Profile picture removed");
+                                await checkAuth();
+                            } catch (error) {
+                                toast.error("Failed to remove profile picture");
+                            }
+                        }}
+                    >
+                        Remove DP
+                    </button>
+                )}
+                <div className="text-4xl font-extrabold text-black mt-3 mb-4 drop-shadow-sm">
+                    {authUser.name}
                 </div>
             </div>
 
-            <div className="w-full h-50 my-4 flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
+            {/* Task Stats */}
+            <div className="grid grid-rows-2 grid-cols-2 gap-4 mt-8 text-center ">
+                <div className='col-span-2'>
+                    <div className="flex flex-col items-center ">
+                        <span className='text-lg font-medium text-gray-600 drop-shadow-sm'>Pending</span>
+                        <span className='text-2xl font-semibold text-black'>{pendingNo}</span>
+                    </div>
+                </div>
+                <div>
+                    <div className="flex flex-col items-center">
+                        <span className='text-lg font-medium text-gray-600 drop-shadow-sm'>Completed</span>
+                        <span className='text-2xl font-semibold text-black'>{completedNo}</span>
+                    </div>
+                </div>
+                <div>
+                    <div className="flex flex-col items-center">
+                        <span className='text-lg font-medium text-gray-600 drop-shadow-sm'>Due</span>
+                        <span className='text-2xl font-semibold text-black'>{dueNo}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Chart */}
+            <div className="w-full h-56 mt-6 flex items-center justify-center">
+                <ResponsiveContainer width="80%" height="100%">
                     <PieChart>
                         <Pie
                             data={chartData}
@@ -113,11 +157,17 @@ const Stats = () => {
                 </ResponsiveContainer>
             </div>
 
-            <div className="w-full h-38 bg-gray-700 my-4 flex items-center justify-center text-white">
-                {quote}
+            {/* Quote */}
+            <div className="w-full mt-6 text-center text-black">
+                {quote.q && (
+                    <blockquote className="italic text-lg font-light tracking-wide leading-relaxed">
+                        “{quote.q}”
+                        {quote.a && <footer className="mt-2 text-sm font-semibold">&mdash; {quote.a}</footer>}
+                    </blockquote>
+                )}
             </div>
         </div>
-    )
+    );
 }
 
 export default Stats;

@@ -15,6 +15,10 @@ const userScheme = new mongoose.Schema({
         required:true,
         minlength:6
     },
+    dp:{
+        type:String,
+        default:null
+    },
 },{
     timestamps:true
 })

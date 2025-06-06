@@ -35,7 +35,7 @@ app.get('/api/quote',async (req,res) => {
         console.error('Error fetching quote:', error);
         res.status(500).json({ error: 'Failed to fetch quote' });
     }
-})
+}) 
 
 
 app.listen(PORT,()=>{
