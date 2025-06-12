@@ -1,14 +1,5 @@
 import mongoose from "mongoose";
 
-// user can do 
-//     title
-//     desc
-//     duedate
-//     tags
-//     section -- must be given by us
-//     userID - background
-
-
 const taskScheme = mongoose.Schema({
     title:{
         type:String,
